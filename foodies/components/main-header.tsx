@@ -1,10 +1,12 @@
 import Link from "next/link";
 import logo from "@/assets/logo.png";
+/**Every class defined in this module will be available as a property on this imported object */
+import classes from "./main-header.module.css";
 
 const MainHeader = () => {
   return (
-    <header>
-      <Link href="/">
+    <header className={classes.header}>
+      <Link href="/" className={classes.logo}>
         {/**
          * Unlike in React projects, we can't just pass the image like this(src={logo}).
          * Instead we have to access the "src" property. Because this imported logo in NextJS projects
@@ -14,7 +16,7 @@ const MainHeader = () => {
         Next-Level Food
       </Link>
 
-      <nav>
+      <nav className={classes.nav}>
         <ul>
           <li>
             <Link href="/meals">Browse Meals</Link>
