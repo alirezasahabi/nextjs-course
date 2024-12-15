@@ -2,6 +2,11 @@
  * "layout" is reserved name in the file-base routing which returns a React component.
  * It's a wrapper around the page content(It defines the shell around one or more pages).
  * Every NextJS project needs at least one root layout file(One layout file at the top of the "app" folder.).
+ *
+ * If we had a nested layout, then that layout would become active
+ * for the related pages inside that folder,
+ * but it would itself be nested into the root layout.
+ * So the root layout will always be active.
  */
 
 /**
