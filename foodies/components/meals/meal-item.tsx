@@ -1,15 +1,9 @@
 import Image from "next/image";
 import classes from "./meal-item.module.css";
 import Link from "next/link";
+import { Meal } from "@/lib/meals";
 
-interface Props {
-  image: string;
-  title: string;
-  creator: string;
-  summary: string;
-  slug: string;
-}
-const MealItem = ({ image, title, creator, summary, slug }: Props) => {
+const MealItem = ({ image, title, creator, summary, slug }: Meal) => {
   return (
     <article className={classes.meal}>
       <header>

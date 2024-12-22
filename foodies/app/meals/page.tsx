@@ -1,7 +1,7 @@
 import Link from "next/link";
 import classes from "./page.module.css";
 import MealsGrid from "@/components/meals/meals-grid";
-import { getMeals } from "@/lib/meals";
+import { getMeals, Meal } from "@/lib/meals";
 
 /**Server component functions can be converted to async functions */
 const MealsPage = async () => {
@@ -14,7 +14,7 @@ const MealsPage = async () => {
    * Because this is a server component that only runs on the server, reaching out to a database is safe here.
    */
 
-  const meals: any[] = await getMeals();
+  const meals = (await getMeals()) as Meal[];
 
   return (
     <>
@@ -23,7 +23,10 @@ const MealsPage = async () => {
           Delicious meals, created{" "}
           <span className={classes.highlight}>by YOU</span>
         </h1>
-        <p>Choose your favorite recipe & cook it yourself. It's easy & FUN!</p>
+        <p>
+          Choose your favorite recipe & cook it yourself. It`&apos;`s easy &
+          FUN!
+        </p>
         <p className={classes.cta}>
           <Link href="/meals/share">Share Your Favorite Recipe</Link>
         </p>
