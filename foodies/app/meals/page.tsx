@@ -2,9 +2,10 @@ import Link from "next/link";
 import classes from "./page.module.css";
 import MealsGrid from "@/components/meals/meals-grid";
 import { getMeals, Meal } from "@/lib/meals";
+import { Suspense } from "react";
 
 /**Server component functions can be converted to async functions */
-const MealsPage = async () => {
+const Meals = async () => {
   /**
    * In vanila React apps, we use the "useEffect" hook to send request to a back-end
    * & then in the back-end we reach out to a database & get the data.
@@ -16,6 +17,10 @@ const MealsPage = async () => {
 
   const meals = (await getMeals()) as Meal[];
 
+  return <MealsGrid meals={meals} />;
+};
+
+const MealsPage = () => {
   return (
     <>
       <header className={classes.header}>
@@ -32,7 +37,27 @@ const MealsPage = async () => {
         </p>
       </header>
       <main className={classes.main}>
-        <MealsGrid meals={meals} />
+        {/**
+         * We can go to the places where we have operation that may take a bit longer(like data fetching),
+         * create a separate component move them there. Now it's this component that is responsible for fetching data.
+         * The adventage is that we now outsourced the data fetching part into a separate component & now
+         * wrap this component with a component that's built in React "Suspense".
+         *
+         * "Suspense" is a component that is provided by React that allows us handle loading state &
+         * show a fallback content until some data or resource has been loaded.
+         * NextJS embraces "Suspense" concept & make sure that whenever we have such a component
+         * which performs data fetching & returns a promise, it will trigger "Suspense" to
+         * show the fallback until they're done.
+         *
+         * The "loading" file also doing the same thing behinde scenes.
+         * It's wrapping the "page" file content with suspense component & then showing
+         * the "loading" file content as a fallback.
+         */}
+        <Suspense
+          fallback={<p className={classes.loading}>Loading meals...</p>}
+        >
+          <Meals />
+        </Suspense>
       </main>
     </>
   );
