@@ -16,6 +16,9 @@ export interface Meal {
 
 export async function getMeals() {
   await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  // throw new Error("Hoy!");
+
   /**Pass SQL statement */
   return db.prepare("SELECT * FROM meals").all();
   /**Fetch all the rows */
