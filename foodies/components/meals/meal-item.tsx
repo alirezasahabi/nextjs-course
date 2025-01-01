@@ -3,7 +3,7 @@ import classes from "./meal-item.module.css";
 import Link from "next/link";
 import { Meal } from "@/lib/meals";
 
-const MealItem = ({ image, title, creator, summary, slug }: Meal) => {
+const MealItem = ({ image, title, creator, summary, id }: Meal) => {
   return (
     <article className={classes.meal}>
       <header>
@@ -30,7 +30,7 @@ const MealItem = ({ image, title, creator, summary, slug }: Meal) => {
       <div className={classes.content}>
         <p className={classes.summary}>{summary}</p>
         <div className={classes.actions}>
-          <Link href={`/meals/${slug}`}>View Details</Link>
+          <Link href={`/meals/${id}`}>View Details</Link>
         </div>
       </div>
     </article>

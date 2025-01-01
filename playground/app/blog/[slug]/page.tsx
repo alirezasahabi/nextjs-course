@@ -11,7 +11,7 @@
 interface Props {
   /**
    * All these components get one special prop.
-   * This will be an object where every that we had in such a dynamic route here
+   * This will be an object where every placeholder that we had in such a dynamic route here(the name between square brackets)
    * will be a key(In this case "slug") & the value stored under that key will be
    * the concrete value encoded in the URL.
    *

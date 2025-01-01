@@ -28,3 +28,15 @@ export async function getMeals() {
   /**For changing data */
   // .run
 }
+
+export function getMeal(id: number) {
+  /**
+   * We use a "?" as placeholder, call the get method & pass the value that should be inserted
+   * for that placeholder.
+   * Under the hood "better-sqlite3" will protect us agains SQL injection attacks.
+   * That's why we should add dynamic values into our statements like this.
+   */
+  return db.prepare(`SELECT * FROM meals WHERE id = ?`).get(id);
+  /**This will be insecure. Becuse it opens ourself up to SQL injextion. */
+  // db.prepare(`SELECT * FROM meals WHERE id = ${id}`);
+}
