@@ -1,14 +1,23 @@
 import Image from "next/image";
 import classes from "./page.module.css";
 import { getMeal, Meal } from "@/lib/meals";
+import { notFound } from "next/navigation";
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 const MealDetailsPage = async ({ params }: Props) => {
   const id = (await params).id;
-
   const meal = getMeal(parseInt(id)) as Meal;
+
+  /**
+   * By default we get the "error" page.
+   * A better way of handling this is show the "not-found" page.
+   * "notFound" is a function provided by NextJS which calling it
+   * will stop this component from executing & show the closest "not-found" page.
+   */
+  if (!meal) notFound();
+
   meal.instructions = meal.instructions.replace(/\n/g, "<br />");
 
   return (
