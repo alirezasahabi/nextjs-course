@@ -1,5 +1,20 @@
+/**
+ * We can add a server action like this but this will only work
+ * if the component in which we're adding it is not a client component.
+ * If it's a client a component we're gonna get en error that
+ * we're not allowed to have server actions in a client component.
+ * But we can import server actions from another file & then use it inside a client component.
+ * The problem is that we're defining client & server side code in the same file.
+ * The build process that's used by NextJS is not able to separate that &
+ * therefore server side code could end up on the client side which could cause
+ * security issues & other problems as well.
+ */
+
+// "use client";
+
 import ImagePicker from "@/components/meals/image-picker";
 import classes from "./page.module.css";
+import { shareMeal } from "@/lib/actions";
 
 export default function ShareMealPage() {
   /**
@@ -28,26 +43,26 @@ export default function ShareMealPage() {
   * This function will automatically receive the "formData" that was submitted. 
   */
 
-  async function shareMeal(formData: FormData) {
-    "use server";
+  // async function shareMeal(formData: FormData) {
+  //   "use server";
 
-    const meal = {
-      title: formData.get("title"),
-      summary: formData.get("summary"),
-      instructions: formData.get("instructions"),
-      image: formData.get("image"),
-      creator: formData.get("name"),
-      creator_email: formData.get("email"),
-    };
+  //   const meal = {
+  //     title: formData.get("title"),
+  //     summary: formData.get("summary"),
+  //     instructions: formData.get("instructions"),
+  //     image: formData.get("image"),
+  //     creator: formData.get("name"),
+  //     creator_email: formData.get("email"),
+  //   };
 
-    /**
-     * If we submit the form we see that:
-     * the page didn't reload,
-     * we see no log in the console & instead we see the output
-     * on the server side in that terminal where we started the development server.
-     */
-    console.log(meal);
-  }
+  /**
+   * If we submit the form we see that:
+   * the page didn't reload,
+   * we see no log in the console & instead we see the output
+   * on the server side in that terminal where we started the development server.
+   */
+  //   console.log(meal);
+  // }
 
   return (
     <>
