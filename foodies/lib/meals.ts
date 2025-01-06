@@ -1,4 +1,6 @@
 import sql from "better-sqlite3";
+import slugify from "slugify";
+import xss from "xss";
 
 /**Establish the database connection by passing the name of the database */
 const db = sql("meals.db");
@@ -39,4 +41,13 @@ export function getMeal(id: number) {
   return db.prepare(`SELECT * FROM meals WHERE id = ?`).get(id);
   /**This will be insecure. Becuse it opens ourself up to SQL injextion. */
   // db.prepare(`SELECT * FROM meals WHERE id = ${id}`);
+}
+
+export function saveMeal(meal: Omit<Meal, "id">) {
+  meal.slug = slugify(meal.title, { lower: true });
+  /**
+   * Sanitizing content sent by the user to prevent cross-site scripting attacks.
+   * This will remove any harmful content.
+   */
+  meal.instructions = xss(meal.instructions)
 }
