@@ -12,7 +12,10 @@ import { saveMeal } from "./meals";
 
 const isInvalidText = (text: any) => !text || text.trim() === "";
 
-export async function shareMeal(formData: FormData) {
+export async function shareMeal(
+  _: { message: string | null },
+  formData: FormData
+) {
   const meal = {
     title: formData.get("title"),
     summary: formData.get("summary"),
@@ -36,7 +39,14 @@ export async function shareMeal(formData: FormData) {
     !meal.image ||
     (meal.image as File).size === 0
   ) {
-    throw new Error("Invalid input!");
+    // throw new Error("Invalid input!");
+    /**
+     * In server actions, we can also return values.
+     * NOTE: If the value is an object, it has to be a serializable object.
+     * Which means, for example it shouldn't include any methods,
+     * because those would get lost whilst beind send to client.
+     */
+    return { message: "Invalid input!"  };
   }
 
   await saveMeal(meal as any);

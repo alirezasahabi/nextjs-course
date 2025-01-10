@@ -10,12 +10,17 @@
  * security issues & other problems as well.
  */
 
-// "use client";
+"use client";
 
 import ImagePicker from "@/components/meals/image-picker";
 import classes from "./page.module.css";
 import { shareMeal } from "@/lib/actions";
 import MealFormSubmit from "@/components/meals/meal-form-submit";
+
+/**Previous version */
+// import { useFormState } from "react-dom";
+/**React 19 */
+import { useActionState } from "react";
 
 export default function ShareMealPage() {
   /**
@@ -65,6 +70,34 @@ export default function ShareMealPage() {
   //   console.log(meal);
   // }
 
+  /**
+   * useActionState: Almost similar to "useState".
+   * This hook is responsible for managing the state of this page/component
+   * which uses a form that will be submitted with help of server actions.
+   *
+   * This hook needs two parameters:
+   * 1) action: The sever action that should be triggered when the form is submitted.
+   * 2) initialState: The initial value that should be returned by this hook
+   *    before the action has been triggered & returned a response.
+   *    (The initial value that should be used if we haven't received a response from this action yet.)
+   *
+   * This hook returns an array with two elements:
+   * 1) currentState: The latest response returned by this server action(which is initially the initialState).
+   * 2) formAction: We have pass this as "action" prop to the form instead of our server action.
+   * This must be done so that this hook can basically step in & manage that state.
+   * 
+   * We also need to change our action, because when passing it to "useActionState" hook
+   * it passes to two paramater to it when it execute it:
+   * 1) prevState: Either that initialState that we set up or any other previous responses.
+   * 2) formData: The submitted data.
+   */
+  const [state, action] = useActionState<{ message: string | null }>(
+    shareMeal as any,
+    {
+      message: null,
+    }
+  );
+
   return (
     <>
       <header className={classes.header}>
@@ -74,7 +107,7 @@ export default function ShareMealPage() {
         <p>Or any other meal you feel needs sharing!</p>
       </header>
       <main className={classes.main}>
-        <form className={classes.form} action={shareMeal}>
+        <form className={classes.form} action={action}>
           <div className={classes.row}>
             <p>
               <label htmlFor="name">Your name</label>
@@ -103,6 +136,7 @@ export default function ShareMealPage() {
             ></textarea>
           </p>
           <ImagePicker label="Your Image" name="image" />
+          {state.message && <p>{state.message}</p>}
           <p className={classes.actions}>
             <MealFormSubmit />
           </p>
