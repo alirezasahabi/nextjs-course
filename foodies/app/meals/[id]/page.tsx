@@ -30,7 +30,7 @@ const MealDetailsPage = async ({ params }: Props) => {
           <h1>{meal.title}</h1>
           <p className={classes.creator}>
             {/**Setting up a link that will open the mail program. */}
-            by <a href={`meailto:${meal.creator_email}`}>{meal.creator}</a>
+            by <a href={`mailto:${meal.creator_email}`}>{meal.creator}</a>
           </p>
         </div>
         <p className={classes.summary}>{meal.summary}</p>
