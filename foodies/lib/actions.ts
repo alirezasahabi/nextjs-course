@@ -21,6 +21,18 @@ export async function shareMeal(
     title: formData.get("title"),
     summary: formData.get("summary"),
     instructions: formData.get("instructions"),
+    /**
+     * When we add a new meal in the production the uploaded image gets lost.
+     * Right now we're storing images in the "public" folder.
+     * The problem with this approach is that the "public" folder is available during development
+     * but for production it's coppied into ".next" folder & it's this folder that will be used
+     * by the running NextJS production server.
+     * So if we then add a new image to the "public", it will be ignored.
+     *
+     * This behavior is described in the NextJS docs: https://nextjs.org/docs/pages/building-your-application/optimizing/static-assets
+     * NextJS recommend that we should store any files that are generated at runtime,
+     * using extra file storage services(EX: AWS S3).
+     */
     image: formData.get("image"),
     creator: formData.get("name"),
     creator_email: formData.get("email"),
@@ -60,7 +72,7 @@ export async function shareMeal(
    * So all data will be fetched during the build process.
    * By pre-rending these pages, it has those pages availabe tight from the start after being deployed.
    * The downside of this approach is that, it necer refetches data.
-   * 
+   *
    * To fiX this, we need to tell NextJS to throw away its cache or parts of it whenever we create new data.
    * "revalidatePath" built-in function provided by NextJS which tells it to revalidate the cache that
    * belongs to a certain route path.
@@ -68,10 +80,10 @@ export async function shareMeal(
    * By default only this path will be revalidated & no nested paths.
    * If we set it to "layout", it's the layout that will be revalidated & therefore
    * all nested pages will be revalidated.
-   * 
+   *
    * Revalidate all the pages of the website.
    * revalidatePath("/", "layout");
-   */ 
+   */
   revalidatePath("/meals");
   redirect("/meals");
 }
