@@ -12,10 +12,10 @@ interface Props {
  * For dynamic pages, we can add metadata by exporting an async function called "generateMetadata".
  * It must be named like this because NextJS is looking for functions like this to execute.
  * If it doesn't find an exported variable named "metadata", it's checking whether there is such a function.
- * 
+ *
  * This function receives the same data that our page component receives as props.
-*/
-export function generateMetadata({ params }: Props) {
+ */
+export async function generateMetadata({ params }: Props) {
   const id = (await params).id;
   const meal = getMeal(parseInt(id)) as Meal;
 
@@ -23,11 +23,11 @@ export function generateMetadata({ params }: Props) {
    * If we enter an invalid param id, we get the error page instead of not found,
    * because the metadata is generated first & accessing data of the fetched object fails.
    * We add this if block to ensure we show the not found.
-  */
+   */
   if (!meal) notFound();
 
-  return { title: meal.title, description: meal.instructions }; as Metadata
-};
+  return { title: meal.title, description: meal.instructions } as Metadata;
+}
 
 const MealDetailsPage = async ({ params }: Props) => {
   const id = (await params).id;
