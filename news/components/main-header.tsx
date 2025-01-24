@@ -1,20 +1,18 @@
 import Link from "next/link";
 
-const MainHeader = () => {
+export default function MainHeader() {
   return (
-    <header
-      style={{
-        height: 50,
-        padding: "0 1rem",
-        display: "flex",
-        alignItems: "center",
-        gap: "1rem",
-      }}
-    >
-      <Link href="/">Home</Link>
-      <Link href="/news">News</Link>
+    <header id="main-header">
+      <div id="logo">
+        <Link href="/">NextNews</Link>
+      </div>
+      <nav>
+        <ul>
+          <li>
+            <Link href="/news">News</Link>
+          </li>
+        </ul>
+      </nav>
     </header>
   );
-};
-
-export default MainHeader;
+}
