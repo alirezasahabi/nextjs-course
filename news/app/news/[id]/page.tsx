@@ -1,4 +1,5 @@
 import { DUMMY_NEWS } from "@/dummy-news";
+import { notFound } from "next/navigation";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -7,6 +8,8 @@ const NewsDetailsPage = async ({ params }: Props) => {
   const id = (await params).id;
 
   const news = DUMMY_NEWS.find((news) => news.id === id);
+
+  if (!news) notFound();
 
   return (
     <article className="news-article">
