@@ -58,6 +58,13 @@ const FilteredNewsPage = async ({ params }: Props) => {
 
   if (newsList.length > 0) newsContent = <NewsList list={newsList} />;
 
+  if (
+    (selectedYear && !getAvailableNewsYears().includes(+selectedYear)) ||
+    (selectedMonth &&
+      !getAvailableNewsMonths(selectedYear ?? "").includes(+selectedMonth))
+  )
+    throw new Error("Invalid filter!");
+
   return (
     <>
       <header id="archive-header">
