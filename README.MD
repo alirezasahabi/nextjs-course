@@ -31,5 +31,6 @@ npm run dev
 | Section                                   | Description                                                           |
 | ----------------------------------------- | --------------------------------------------------------------------- |
 | [App Router](./docs/app-router/README.md) | File-based routing, layouts, loading/error states, and route handlers |
+| [Components](./docs/components/README.md) | Server Components, Client Components and Next.js built-in components  |
 
 
