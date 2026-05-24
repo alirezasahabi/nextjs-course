@@ -28,9 +28,10 @@ npm run dev
 ---
 ## Table of Contents
 
-| Section                                   | Description                                                           |
-| ----------------------------------------- | --------------------------------------------------------------------- |
-| [App Router](./docs/app-router/README.md) | File-based routing, layouts, loading/error states, and route handlers |
-| [Components](./docs/components/README.md) | Server Components, Client Components and Next.js built-in components  |
+| Section                                           | Description                                                                |
+| ------------------------------------------------- | -------------------------------------------------------------------------- |
+| [App Router](./docs/app-router/README.md)         | File-based routing, layouts, loading/error states, and route handlers      |
+| [Components](./docs/components/README.md)         | Server Components, Client Components and Next.js built-in components       |
+| [Server Actions](./docs/server-actions/README.md) | Handling form submissions, mutations, and cache revalidation on the server |
 
 
