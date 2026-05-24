@@ -1,9 +1,3 @@
-/**
- * We typically wanna add "use client" as far down the component tree as posible;
- * So that we only turn the components that need to be converted to client components 
- * into client components; So the majority of our components can stay server components.
- */
-
 "use client";
 
 import { usePathname } from "next/navigation";

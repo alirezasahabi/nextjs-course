@@ -8,13 +8,6 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
-/**
- * For dynamic pages, we can add metadata by exporting an async function called "generateMetadata".
- * It must be named like this because NextJS is looking for functions like this to execute.
- * If it doesn't find an exported variable named "metadata", it's checking whether there is such a function.
- *
- * This function receives the same data that our page component receives as props.
- */
 export async function generateMetadata({ params }: Props) {
   const id = (await params).id;
   const meal = getMeal(parseInt(id)) as Meal;

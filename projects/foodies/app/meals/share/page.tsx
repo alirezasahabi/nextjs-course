@@ -1,15 +1,3 @@
-/**
- * We can add a server action like this but this will only work
- * if the component in which we're adding it is not a client component.
- * If it's a client a component we're gonna get en error that
- * we're not allowed to have server actions in a client component.
- * But we can import server actions from another file & then use it inside a client component.
- * The problem is that we're defining client & server side code in the same file.
- * The build process that's used by NextJS is not able to separate that &
- * therefore server side code could end up on the client side which could cause
- * security issues & other problems as well.
- */
-
 "use client";
 
 import ImagePicker from "@/components/meals/image-picker";
@@ -23,79 +11,11 @@ import MealFormSubmit from "@/components/meals/meal-form-submit";
 import { useActionState } from "react";
 
 export default function ShareMealPage() {
-  /**
-  * When it comes to handling form submissions we could do it
-  * as we do it in most React projects. Pass a function to onSubmit prop,
-  * manually collect all the data & send it to a back-end.
-  *
-  * But here we already are on the back-end.
-  * NextJS provides a more powerful & convenient pattern.
-  * We create a function in the component that holds the form.
-  * We add the "use server" directive inside the body of this function.
-  * This creates a "Server Action", which is a function that executes on the server.
-  * In addition we also have to add the "async" keyword to this function too.
-   
-  * (This feature exists on React just like server components which needs to be unlocked
-  * by a framework like NextJS).
-  
-  * We assign this server action as a value for the "action" prop of the form.
-  
-  * (Normally the "action prop is set to the path to which the request should be sent
-  * if we're relying on the browser built-in form handling capabilities.")
-  
-  * This will insure that when this form is submitted NextJS will behind the scenes,
-  * create a request & send it to this NextJS server that's serving the website, 
-  * so that this function gets triggered & we can handle the form submission there.
-  * This function will automatically receive the "formData" that was submitted. 
-  */
-
-  // async function shareMeal(formData: FormData) {
-  //   "use server";
-
-  //   const meal = {
-  //     title: formData.get("title"),
-  //     summary: formData.get("summary"),
-  //     instructions: formData.get("instructions"),
-  //     image: formData.get("image"),
-  //     creator: formData.get("name"),
-  //     creator_email: formData.get("email"),
-  //   };
-
-  /**
-   * If we submit the form we see that:
-   * the page didn't reload,
-   * we see no log in the console & instead we see the output
-   * on the server side in that terminal where we started the development server.
-   */
-  //   console.log(meal);
-  // }
-
-  /**
-   * useActionState: Almost similar to "useState".
-   * This hook is responsible for managing the state of this page/component
-   * which uses a form that will be submitted with help of server actions.
-   *
-   * This hook needs two parameters:
-   * 1) action: The sever action that should be triggered when the form is submitted.
-   * 2) initialState: The initial value that should be returned by this hook
-   *    before the action has been triggered & returned a response.
-   *    (The initial value that should be used if we haven't received a response from this action yet.)
-   *
-   * This hook returns an array with two elements:
-   * 1) currentState: The latest response returned by this server action(which is initially the initialState).
-   * 2) formAction: We have pass this as "action" prop to the form instead of our server action.
-   * This must be done so that this hook can basically step in & manage that state.
-   * 
-   * We also need to change our action, because when passing it to "useActionState" hook
-   * it passes to two paramater to it when it execute it:
-   * 1) prevState: Either that initialState that we set up or any other previous responses.
-   * 2) formData: The submitted data.
-   */
   const [state, action] = useActionState<{ message: string | null }>(
     shareMeal as any,
     {
       message: null,
-    }
+    },
   );
 
   return (
