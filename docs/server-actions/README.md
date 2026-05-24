@@ -308,6 +308,8 @@ export default function ShareMealPage() {
 }
 ```
 
+> **Note:** If the returned value is an object, it has to be a serializable object. Which means, for example it shouldn't include any methods, because those would get lost whilst being send to client.
+
 **Data flow summary:**
 
 ```
