@@ -155,7 +155,7 @@ export default function DashboardLayout({
 
 ### Dynamic Metadata — `generateMetadata`
 
-For **static pages**, metadata is set by exporting a `metadata` constant (see [`layout`](https://claude.ai/chat/4a90f693-e675-419a-9729-f46c2debd532#layout)). For **dynamic pages** where the metadata depends on route params or fetched data, export an async function named `generateMetadata` instead.
+For **static pages**, metadata is set by exporting a `metadata` constant (see [`layout`](#layout)). For **dynamic pages** where the metadata depends on route params or fetched data, export an async function named `generateMetadata` instead.
 
 Next.js looks for this specific function name — if there's no exported `metadata` constant, it checks for `generateMetadata` and calls it automatically. The function receives the **same props as the page component** (e.g. `params`, `searchParams`).
 
@@ -681,3 +681,88 @@ export default function Layout({
   );
 }
 ```
+
+---
+
+## Navigation Utilities
+
+These are hooks and functions from `next/navigation` used to read or control the current route programmatically.
+
+### `usePathname`
+
+A Client Component hook that returns the **current URL pathname** as a string. Useful for highlighting active navigation links, conditionally rendering UI based on the current route, etc.
+
+```tsx
+// components/nav-link.tsx
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+interface Props {
+  href: string;
+  children: React.ReactNode;
+}
+
+const NavLink = ({ href, children }: Props) => {
+  const path = usePathname();
+
+  return (
+    <Link
+      href={href}
+      className={path.startsWith(href) ? "active" : undefined}
+    >
+      {children}
+    </Link>
+  );
+};
+
+export default NavLink;
+```
+
+> **Note:** `usePathname` only returns the pathname portion of the URL (e.g. `/blog/hello-world`), not the full URL including query string or hash.
+
+---
+
+### `useRouter`
+
+A Client Component hook that gives you programmatic control over navigation. Use it when you need to navigate in response to an event that isn't a direct link click — for example, after a form submission, a timeout, or a button action.
+
+```tsx
+"use client";
+
+import { useRouter } from "next/navigation";
+
+export default function BackButton() {
+  const router = useRouter();
+
+  return (
+    <button onClick={() => router.back()}>← Go Back</button>
+  );
+}
+```
+
+**Key methods:**
+
+|Method|Description|
+|---|---|
+|`router.push(href)`|Navigate to a new route, adding to the browser history|
+|`router.replace(href)`|Navigate without adding to browser history|
+|`router.back()`|Go back one entry in the browser history|
+|`router.forward()`|Go forward one entry in the browser history|
+|`router.refresh()`|Re-fetch the current page's Server Components without a full reload. Useful for refreshing data after a mutation.|
+|`router.prefetch(href)`|Manually prefetch a route for faster navigation|
+
+> **Prefer `<Link>` over `useRouter.push()`** for standard navigation. `<Link>` automatically prefetches the destination page and is more accessible. Use `useRouter` only when you need programmatic or conditional navigation.
+
+---
+
+### Other Navigation Utilities
+
+|Hook / Function|Type|Description|
+|---|---|---|
+|`useSearchParams()`|Hook (Client)|Returns the current URL query string as a `ReadonlyURLSearchParams` object|
+|`useParams()`|Hook (Client)|Returns the dynamic route params for the current route (e.g. `{ slug: "hello" }`)|
+|`redirect(href)`|Function (Server)|Redirects to another route from a Server Component or Server Action. Throws internally — must be called outside try/catch.|
+|`notFound()`|Function (Server)|Triggers the nearest `not-found.tsx`. Same rules as `redirect()`.|
+|`permanentRedirect(href)`|Function (Server)|Like `redirect()` but returns a 308 instead of 307|
