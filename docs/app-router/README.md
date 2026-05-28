@@ -697,40 +697,80 @@ app/
 ```
 
 ---
+### Parallel Routes
 
-### Parallel Route
+Parallel routes let you render **multiple independent route segments simultaneously on the same page** — for example, a stats panel and a feed side by side, or a modal layered on top of existing content.
 
-Folders prefixed with `@` define **named slots** for parallel routes — a way to render multiple pages simultaneously within the same layout (e.g. a sidebar + a main content area, or a modal overlay).
+To set up parallel routing:
+
+1. Add a `layout.tsx` to the folder where you want parallel content.
+2. Add one `@`-prefixed subfolder per parallel slot.
+3. The layout receives each slot as a named prop (the name after `@`), instead of the usual `children`.
 
 ```
-app/
-├── layout.tsx           →  receives both @feed and @modal as props
-├── @feed/
-│   └── page.tsx         →  rendered in the "feed" slot
-└── @modal/
-    ├── page.tsx          →  rendered in the "modal" slot
-    └── default.tsx       →  fallback when modal is inactive
+app/archive/
+├── layout.tsx       →  receives "archive" and "latest" as props
+├── @archive/
+│   └── page.tsx     →  content for the archive slot
+└── @latest/
+    └── page.tsx     →  content for the latest slot
 ```
 
 ```tsx
-// app/layout.tsx
-export default function Layout({
-  children,
-  feed,
-  modal,
-}: {
-  children: React.ReactNode;
-  feed: React.ReactNode;
-  modal: React.ReactNode;
-}) {
-  return (
-    <>
-      {feed}
-      {modal}
-      {children}
-    </>
-  );
+// app/archive/layout.tsx
+
+import React from "react";
+
+interface Props {
+  archive: React.ReactNode;
+  latest: React.ReactNode;
 }
+
+const ArchiveLayout = ({ archive, latest }: Props) => {
+  return (
+    <div>
+      <h1>Archived News</h1>
+      <section id="archive-filter">{archive}</section>
+      <section id="archive-latest">{latest}</section>
+    </div>
+  );
+};
+
+export default ArchiveLayout;
+```
+
+> **Note:** When using parallel routes, the layout does **not** receive a `children` prop automatically unless you also have a `page.tsx` directly in the same folder as the layout. That `page.tsx` is still made available as `children` — you can use it alongside the named slots.
+
+#### The `default.tsx` fallback problem
+
+Each parallel slot operates **independently**. If one slot has a nested route (e.g. `@archive/[year]/page.tsx`) and you navigate to `/archive/2024`, the `@latest` slot has no matching page for that path — so Next.js doesn't know what to render for it.
+
+If you then **reload the page**, Next.js can't recover the slot state from the URL alone and will show a 404.
+
+Fix this by adding a `default.tsx` to any slot that doesn't have a matching page for nested paths. It acts as the fallback content for that slot when no more-specific page matches:
+
+```tsx
+// app/archive/@latest/default.tsx
+// Shown when @latest has no specific page for the current URL
+
+export { default } from "./page"; // reuse the same content as page.tsx
+// — or define separate fallback content:
+
+export default function Default() {
+  return <p>Select an archive entry to see details.</p>;
+}
+```
+
+```
+app/archive/
+├── layout.tsx
+├── @archive/
+│   ├── page.tsx          →  shown at "/archive"
+│   └── [year]/
+│       └── page.tsx      →  shown at "/archive/2024"
+└── @latest/
+    ├── page.tsx           →  shown at "/archive"
+    └── default.tsx        →  ← fallback shown at "/archive/2024" (no matching page here)
 ```
 
 ---
