@@ -637,7 +637,7 @@ export default function ArchivePage({ params }: { params: { slug?: string[] } })
 
 Wrapping a folder name in parentheses (`(marketing)`) creates a **route group**. The folder is used for **organization only** — it does not appear in the URL.
 
-Useful for:
+Useful for: 
 
 - Grouping related routes without affecting the URL structure.
 - Applying a shared layout to a subset of routes without nesting them in the URL.
@@ -645,15 +645,39 @@ Useful for:
 ```
 app/
 ├── (marketing)/
-│   ├── layout.tsx       →  shared layout for marketing pages
+│   ├── layout.tsx       →  shared layout for marketing pages only
 │   ├── about/
 │   │   └── page.tsx     →  "/about"   (not "/marketing/about")
 │   └── pricing/
 │       └── page.tsx     →  "/pricing"
 └── (app)/
-    ├── layout.tsx        →  shared layout for app pages
+    ├── layout.tsx        →  shared layout for app pages only
     └── dashboard/
         └── page.tsx      →  "/dashboard"
+```
+
+> **Important constraint:** Once you introduce route groups at a level, **all** routes at that level must belong to a group. You cannot mix grouped and ungrouped routes at the same level.
+> 
+> Route groups create parallel root layout trees. Next.js needs to know which root layout owns special files like `page.tsx`, `layout.tsx`, `not-found.tsx`, `loading.tsx`, and `error.tsx`. If some routes are grouped and others are not, ownership becomes ambiguous and Next.js will throw an error.
+
+```
+❌ Invalid — mixing grouped and ungrouped at the same level
+app/
+├── (marketing)/
+│   └── about/
+│       └── page.tsx
+└── not-found.tsx     ← ambiguous: which group does this belong to?
+
+✅ Valid — all routes at this level are inside a group
+app/
+├── (marketing)/
+│   ├── not-found.tsx  ← clearly belongs to the marketing group
+│   └── about/
+│       └── page.tsx
+└── (app)/
+    ├── not-found.tsx  ← clearly belongs to the app group
+    └── dashboard/
+        └── page.tsx
 ```
 
 ---
