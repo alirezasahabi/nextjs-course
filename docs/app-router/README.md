@@ -323,23 +323,60 @@ export default function Default() {
 
 ### `route`
 
-Creates a **server-side API endpoint** (like an Express route). Supports `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, and `OPTIONS`. Cannot coexist with a `page.tsx` in the same folder.
+Creates a **server-side HTTP endpoint** (Route Handler) — the App Router equivalent of an API route. The folder path becomes the URL. Export functions named after HTTP methods: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS`.
+
+> **Note:** A folder can have either a `page.tsx` **or** a `route.ts` — not both. `page` renders UI, `route` handles HTTP requests.
+
+```
+app/
+└── api/                   ← common convention, any folder name works
+    ├── meals/
+    │   └── route.ts       →  GET /api/meals, POST /api/meals
+    └── meals/[id]/
+        └── route.ts       →  GET /api/meals/[id], DELETE /api/meals/[id]
+```
+
 
 ```ts
-// app/api/hello/route.ts  →  GET /api/hello
-
-import { NextResponse } from "next/server";
+// app/api/meals/route.ts
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
-  return NextResponse.json({ message: "Hello from the API!" });
+  const meals = await getMeals();
+  return NextResponse.json(meals);
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const body = await request.json();
-  return NextResponse.json({ received: body });
+  const newMeal = await createMeal(body);
+  return NextResponse.json(newMeal, { status: 201 });
 }
 ```
 
+
+```ts
+// app/api/meals/[id]/route.ts
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const meal = await getMeal(parseInt(params.id));
+  if (!meal) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  return NextResponse.json(meal);
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  await deleteMeal(parseInt(params.id));
+  return new NextResponse(null, { status: 204 });
+}
+```
+
+> **Route Handler vs Server Action:** Use Server Actions for form submissions and mutations from your own UI. Use Route Handlers when you need a real HTTP endpoint — for a mobile app, a webhook, or a public API.
 ---
 
 ### `middleware`
