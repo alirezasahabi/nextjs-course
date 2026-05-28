@@ -575,35 +575,60 @@ export default function BlogPostPage({ params: { slug } }: Props) {
 
 ### Catch-All Route
 
-Adding `...` inside the brackets (`[...slug]`) captures **one or more** path segments as an array.
+Adding `...` inside the brackets (`[...slug]`) captures **one or more** path segments as an array. Useful when you need a varying number of URL segments — for example, a date-based archive like `/archive/2024/03/15`.
 
 ```
 app/
-└── docs/
-    └── [...path]/
-        └── page.tsx   →  "/docs/a", "/docs/a/b", "/docs/a/b/c", etc.
+└── archive/
+    └── [...slug]/
+        └── page.tsx   →  "/archive/2024", "/archive/2024/03", "/archive/2024/03/15"
+                          ❌ does NOT match "/archive" (requires at least 1 segment)
 ```
 
 ```tsx
-// app/docs/[...path]/page.tsx
+// app/archive/[...slug]/page.tsx
 
-export default function DocsPage({ params }: { params: { path: string[] } }) {
-  return <p>Path segments: {params.path.join(" / ")}</p>;
+export default function ArchivePage({ params }: { params: { slug: string[] } }) {
+  const [year, month, day] = params.slug;
+  // visiting "/archive/2024/03" → params.slug = ["2024", "03"]
+  // visiting "/archive/2024/03/15" → params.slug = ["2024", "03", "15"]
+
+  return <p>Showing archive for: {params.slug.join(" / ")}</p>;
 }
-// visiting "/docs/routing/dynamic" → params.path = ["routing", "dynamic"]
 ```
 
 ---
 
 ### Optional Catch-All Route
 
-Double brackets (`[[...slug]]`) make the catch-all **optional** — it also matches the root segment (zero segments).
+Double brackets (`[[...slug]]`) make the catch-all **optional** — it matches zero or more segments, including the root path with no extra segments.
 
 ```
 app/
-└── docs/
-    └── [[...path]]/
-        └── page.tsx   →  "/docs", "/docs/a", "/docs/a/b", etc.
+└── archive/
+    └── [[...slug]]/
+        └── page.tsx   →  "/archive", "/archive/2024", "/archive/2024/03", etc.
+```
+
+> **Conflict warning:** If you have both `app/archive/page.tsx` and `app/archive/[[...slug]]/page.tsx`, Next.js will throw an error:
+> 
+> ```
+> You cannot define a route with the same specificity as an optional catch-all route.
+> ```
+> 
+> `[[...slug]]` already handles the `/archive` path (zero segments), so a separate `page.tsx` at the same level is redundant and ambiguous. **Remove `app/archive/page.tsx`** and let `[[...slug]]` handle it — check for an empty `params.slug` array instead:
+
+
+```tsx
+// app/archive/[[...slug]]/page.tsx
+
+export default function ArchivePage({ params }: { params: { slug?: string[] } }) {
+  if (!params.slug || params.slug.length === 0) {
+    return <p>Showing all archived content</p>; // matches "/archive"
+  }
+
+  return <p>Showing archive for: {params.slug.join(" / ")}</p>;
+}
 ```
 
 ---
