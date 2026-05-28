@@ -511,15 +511,16 @@ export default function robots(): MetadataRoute.Robots {
 
 Folders inside `app/` define route segments. Beyond naming them after the URL segment you want, Next.js supports several special folder-naming patterns for advanced routing behavior.
 
-| Folder Pattern                               | Example                 | Description                                           |
-| -------------------------------------------- | ----------------------- | ----------------------------------------------------- |
-| [`folder`](#regular-route)                   | `app/about/`            | Regular route segment                                 |
-| [`[folder]`](#dynamic-route)                 | `app/blog/[slug]/`      | Dynamic route segment                                 |
-| [`[...folder]`](#catch-all-route)            | `app/docs/[...path]/`   | Catch-all route (one or more segments)                |
-| [`[[...folder]]`](#optional-catch-all-route) | `app/docs/[[...path]]/` | Optional catch-all (zero or more segments)            |
-| [`(folder)`](#route-group)                   | `app/(marketing)/`      | Route group — groups routes without affecting the URL |
-| [`_folder`](#private-folder)                 | `app/_components/`      | Private folder — excluded from routing entirely       |
-| [`@folder`](#parallel-route)                 | `app/@modal/`           | Named slot for parallel routes                        |
+| Folder Pattern                               | Example                 | Description                                              |
+| -------------------------------------------- | ----------------------- | -------------------------------------------------------- |
+| [`folder`](#regular-route)                   | `app/about/`            | Regular route segment                                    |
+| [`[folder]`](#dynamic-route)                 | `app/blog/[slug]/`      | Dynamic route segment                                    |
+| [`[...folder]`](#catch-all-route)            | `app/docs/[...path]/`   | Catch-all route (one or more segments)                   |
+| [`[[...folder]]`](#optional-catch-all-route) | `app/docs/[[...path]]/` | Optional catch-all (zero or more segments)               |
+| [`(folder)`](#route-group)                   | `app/(marketing)/`      | Route group — groups routes without affecting the URL    |
+| [`_folder`](#private-folder)                 | `app/_components/`      | Private folder — excluded from routing entirely          |
+| [`@folder`](#parallel-route)                 | `app/@modal/`           | Named slot for parallel routes                           |
+| [`(.)folder`](#intercepting-routes)          | `app/(.)image/`         | Intercepts internal navigation to show alternate content |
 
 ---
 
@@ -772,6 +773,37 @@ app/archive/
     ├── page.tsx           →  shown at "/archive"
     └── default.tsx        →  ← fallback shown at "/archive/2024" (no matching page here)
 ```
+
+---
+
+### Intercepting Routes
+
+Intercepting routes let you show **different content for the same URL** depending on how the user got there:
+
+- **Navigating via an internal link** (SPA mode) → the intercepting route is shown instead
+- **Hard reload / direct URL / external link** → the real route is shown as normal
+
+This is the mechanism behind patterns like clicking a photo in a grid to open it in a modal, while visiting the same URL directly shows a full-page view.
+
+To create an intercepting route, create a sibling folder to the segment you want to intercept and prefix it with a dot-notation that mirrors the relative path — just like a relative import:
+
+| Prefix            | Intercepts                                   |
+| ----------------- | -------------------------------------------- |
+| `(.)segment`      | A segment at the **same level**              |
+| `(..)segment`     | A segment **one level up**                   |
+| `(..)(..)segment` | A segment **two levels up**                  |
+| `(...)segment`    | A segment from the **root** `app/` directory |
+
+```
+app/news/
+├── page.tsx                    →  "/news" — news list
+├── [slug]/
+│   └── page.tsx                →  "/news/[slug]" — full article page (direct visit)
+└── (.)image/
+    └── page.tsx                →  intercepts "/news/[slug]/image" when navigating internally
+```
+
+> For more detail and examples, see the [Next.js docs on Intercepting Routes](https://nextjs.org/docs/app/building-your-application/routing/intercepting-routes).
 
 ---
 
