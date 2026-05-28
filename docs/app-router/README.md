@@ -511,16 +511,16 @@ export default function robots(): MetadataRoute.Robots {
 
 Folders inside `app/` define route segments. Beyond naming them after the URL segment you want, Next.js supports several special folder-naming patterns for advanced routing behavior.
 
-| Folder Pattern                               | Example                 | Description                                              |
-| -------------------------------------------- | ----------------------- | -------------------------------------------------------- |
-| [`folder`](#regular-route)                   | `app/about/`            | Regular route segment                                    |
-| [`[folder]`](#dynamic-route)                 | `app/blog/[slug]/`      | Dynamic route segment                                    |
-| [`[...folder]`](#catch-all-route)            | `app/docs/[...path]/`   | Catch-all route (one or more segments)                   |
-| [`[[...folder]]`](#optional-catch-all-route) | `app/docs/[[...path]]/` | Optional catch-all (zero or more segments)               |
-| [`(folder)`](#route-group)                   | `app/(marketing)/`      | Route group — groups routes without affecting the URL    |
-| [`_folder`](#private-folder)                 | `app/_components/`      | Private folder — excluded from routing entirely          |
-| [`@folder`](#parallel-route)                 | `app/@modal/`           | Named slot for parallel routes                           |
-| [`(.)folder`](#intercepting-routes)          | `app/(.)image/`         | Intercepts internal navigation to show alternate content |
+| Folder Pattern                               | Route Name               | Example                 | Description                                              |
+| -------------------------------------------- | ------------------------ | ----------------------- | -------------------------------------------------------- |
+| [`folder`](#regular-route)                   | Regular Route            | `app/about/`            | A plain URL segment                                      |
+| [`[folder]`](#dynamic-route)                 | Dynamic Route            | `app/blog/[slug]/`      | A segment whose value is known only at runtime           |
+| [`[...folder]`](#catch-all-route)            | Catch-All Route          | `app/docs/[...path]/`   | Captures one or more path segments as an array           |
+| [`[[...folder]]`](#optional-catch-all-route) | Optional Catch-All Route | `app/docs/[[...path]]/` | Like catch-all, but also matches zero segments           |
+| [`(folder)`](#route-group)                   | Route Group              | `app/(marketing)/`      | Groups routes for organization — invisible in the URL    |
+| [`_folder`](#private-folder)                 | Private Folder           | `app/_components/`      | Excluded from routing entirely                           |
+| [`@folder`](#parallel-route)                 | Parallel Route           | `app/@modal/`           | Named slot rendered simultaneously in the same layout    |
+| [`(.)folder`](#intercepting-routes)          | Intercepting Route       | `app/(.)image/`         | Intercepts internal navigation to show alternate content |
 
 ---
 
