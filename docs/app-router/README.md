@@ -569,6 +569,8 @@ export default function BlogPostPage({ params: { slug } }: Props) {
 
 > **Multiple dynamic segments** are supported in the same path: `app/shop/[category]/[productId]/page.tsx` → `/shop/:category/:productId`
 
+> **Nested routes inherit params:** Any route nested inside a dynamic segment has access to that segment's params. For example, `app/news/[slug]/image/page.tsx` (a static sub-route inside a dynamic segment) will still receive `params.slug` in its props.
+
 ---
 
 ### Catch-All Route
