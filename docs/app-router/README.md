@@ -10,6 +10,7 @@
 - [How It Works](#how-it-works)
 - [Reserved Filenames](#reserved-filenames)
 - [Folder Naming Conventions](#folder-naming-conventions)
+- [Navigation Utilities](#navigation-utilities)
 
 ---
 
@@ -343,28 +344,55 @@ export async function POST(request: Request) {
 
 ### `middleware`
 
-Runs **before a request is completed**, allowing you to rewrite, redirect, add headers, or check auth. Lives at the root of the project (next to `app/`), not inside `app/`.
+Runs **before every request is processed** — before the page renders, before route handlers execute, before caching is checked. The right place for auth checks, redirects, and header manipulation.
+
+Lives in the **project root** (next to `app/`, not inside it). Must export a function named `middleware`.
+
 
 ```ts
-// middleware.ts  (project root, not inside app/)
-
+// middleware.ts  (project root)
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import type { NextRequest, MiddlewareConfig } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const isLoggedIn = request.cookies.get("token");
+  const token = request.cookies.get("auth-token");
 
-  if (!isLoggedIn) {
+  if (!token) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return NextResponse.next();
 }
+```
 
-export const config = {
-  matcher: ["/dashboard/:path*"], // only run on these paths
+**`NextResponse` methods:**
+
+|Method|Description|
+|---|---|
+|`NextResponse.next()`|Forwards the request to its actual destination|
+|`NextResponse.redirect(url)`|Redirects the user to another URL|
+|`NextResponse.rewrite(url)`|Serves from a different URL without changing the browser URL|
+|`new NextResponse(body, options)`|Constructs a response from scratch|
+
+**Filtering with `config.matcher`** — by default middleware runs on every request. Export a `config` object to restrict it:
+
+
+```ts
+// Single path
+export const config: MiddlewareConfig = {
+  matcher: "/news",
+};
+
+// Multiple paths and patterns
+export const config: MiddlewareConfig = {
+  matcher: [
+    "/dashboard/:path*",  // /dashboard and all nested routes
+    "/api/:path*",        // all API routes
+  ],
 };
 ```
+
+> For the full list of matcher options, see the [Next.js Middleware docs](https://nextjs.org/docs/app/building-your-application/routing/middleware).
 
 ---
 

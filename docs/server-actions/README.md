@@ -330,7 +330,7 @@ state updates → component re-renders with new state
 
 ### `revalidatePath`
 
-Next.js aggressively caches pages at build time. When you run `npm run build` | `next build`, Next.js pre-renders every page it can and stores the result. After deployment, it serves those pre-rendered pages instantly — **without re-fetching data**, even if the underlying data changes.
+Next.js aggressively caches pages at build time. When you run `npm run build`, Next.js pre-renders every page it can and stores the result. After deployment, it serves those pre-rendered pages instantly — **without re-fetching data**, even if the underlying data changes.
 
 This means if a user adds a new meal via a Server Action, the `/meals` page won't reflect that change until the cache is invalidated.
 
