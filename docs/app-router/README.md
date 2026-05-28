@@ -807,6 +807,54 @@ app/news/
 
 ---
 
+### Combining Parallel & Intercepting Routes
+
+The most powerful use of intercepting routes is combining them with parallel routes to create **modal patterns**: clicking a link opens content in a modal (intercepted route), but navigating directly or reloading shows the full page.
+
+**Example — image modal:**
+
+```
+app/news/[slug]/
+├── layout.tsx          →  receives "children" and "modal" props
+├── page.tsx            →  full article page
+├── image/
+│   └── page.tsx        →  full-page image view (direct visit / reload)
+└── @modal/
+    ├── default.tsx     →  renders null (modal is closed by default)
+    └── (.)image/
+        └── page.tsx    →  modal image view (intercepted internal navigation)
+```
+
+```tsx
+// app/news/[slug]/layout.tsx
+
+import React from "react";
+
+interface Props {
+  /**
+   * The page.tsx in the same folder is available as children.
+   * This is an alternative to creating a dedicated parallel route(e.g. @children).
+   */
+  children: React.ReactNode;
+  modal: React.ReactNode;
+}
+
+const NewsDetailsLayout = ({ children, modal }: Props) => {
+  return (
+    <>
+      {modal}   {/* renders the modal when intercepted, null otherwise */}
+      {children}
+    </>
+  );
+};
+
+export default NewsDetailsLayout;
+```
+
+> **Why `(.)` and not `(..)`?** Even though `@modal/(.)image` is physically inside a subfolder, parallel route folders (`@modal`) are **invisible to the URL**. Next.js resolves the interception prefix against the URL path, not the filesystem path. Since `image` is a sibling in the URL (both live under `/news/[slug]/`), `(.)` is correct.
+
+---
+
 ## Navigation Utilities
 
 These are hooks and functions from `next/navigation` used to read or control the current route programmatically.
