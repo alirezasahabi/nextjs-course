@@ -50,22 +50,22 @@ These filenames have special meaning in the App Router. Next.js will treat them 
 
 > Click on a filename in the table to jump to its full description.
 
-| File                                                      | Extension                   | Description                                      |
-| --------------------------------------------------------- | --------------------------- | ------------------------------------------------ |
-| [`page`](#page)                                           | `.js` `.jsx` `.tsx`         | Renders the UI for a route segment               |
-| [`layout`](#layout)                                       | `.js` `.jsx` `.tsx`         | Shared UI wrapper around one or more pages       |
-| [`generateMetadata`](#dynamic-metadata--generatemetadata) | `.js` `.ts` `.tsx`          | Generates dynamic metadata for pages with params |
-| [`loading`](#loading)                                     | `.js` `.jsx` `.tsx`         | Suspense-based loading UI for a segment          |
-| [`error`](#error)                                         | `.js` `.jsx` `.tsx`         | Error boundary UI for a segment                  |
-| [`not-found`](#not-found)                                 | `.js` `.jsx` `.tsx`         | UI rendered when `notFound()` is thrown          |
-| [`template`](#template)                                   | `.js` `.jsx` `.tsx`         | Like layout, but re-mounts on navigation         |
-| [`default`](#default)                                     | `.js` `.jsx` `.tsx`         | Fallback UI for parallel routes                  |
-| [`route`](#route)                                         | `.js` `.ts`                 | API endpoint (server-side route handler)         |
-| [`middleware`](#middleware)                               | `.js` `.ts`                 | Runs before a request is completed               |
-| [`icon`](#icon)                                           | `.ico` `.jpg` `.png` `.svg` | Favicon for the app                              |
-| [`opengraph-image`](#opengraph-image)                     | `.jpg` `.png` `.gif`        | Open Graph image for social sharing              |
-| [`sitemap`](#sitemap)                                     | `.js` `.ts` `.xml`          | Generates a sitemap                              |
-| [`robots`](#robots)                                       | `.js` `.ts` `.txt`          | Generates a `robots.txt` file                    |
+| File                                  | Extension                   | Description                                |
+| ------------------------------------- | --------------------------- | ------------------------------------------ |
+| [`page`](#page)                       | `.js` `.jsx` `.tsx`         | Renders the UI for a route segment         |
+| [`layout`](#layout)                   | `.js` `.jsx` `.tsx`         | Shared UI wrapper around one or more pages |
+| [`metadata`](#metadata)               | `.js` `.ts` `.tsx`          | Export name - Generates metadata for pages |
+| [`loading`](#loading)                 | `.js` `.jsx` `.tsx`         | Suspense-based loading UI for a segment    |
+| [`error`](#error)                     | `.js` `.jsx` `.tsx`         | Error boundary UI for a segment            |
+| [`not-found`](#not-found)             | `.js` `.jsx` `.tsx`         | UI rendered when `notFound()` is thrown    |
+| [`template`](#template)               | `.js` `.jsx` `.tsx`         | Like layout, but re-mounts on navigation   |
+| [`default`](#default)                 | `.js` `.jsx` `.tsx`         | Fallback UI for parallel routes            |
+| [`route`](#route)                     | `.js` `.ts`                 | API endpoint (server-side route handler)   |
+| [`middleware`](#middleware)           | `.js` `.ts`                 | Runs before a request is completed         |
+| [`icon`](#icon)                       | `.ico` `.jpg` `.png` `.svg` | Favicon for the app                        |
+| [`opengraph-image`](#opengraph-image) | `.jpg` `.png` `.gif`        | Open Graph image for social sharing        |
+| [`sitemap`](#sitemap)                 | `.js` `.ts` `.xml`          | Generates a sitemap                        |
+| [`robots`](#robots)                   | `.js` `.ts` `.txt`          | Generates a `robots.txt` file              |
 
 ---
 
@@ -148,12 +148,12 @@ export default function DashboardLayout({
 ```
 
 > **`children`** is the content of the currently active page (or nested layout) that this layout wraps.
-> 
-> **`metadata`** is a reserved export name. Exporting it from a layout or page sets `<title>`, `<meta>` tags, etc. automatically — no `<head>` tag needed.
 
 ---
 
-### Dynamic Metadata — `generateMetadata`
+### Metadata
+
+A reserved export name. Exporting it from a layout or page sets `<title>`, `<meta>` tags, etc. automatically — no `<head>` tag needed.
 
 For **static pages**, metadata is set by exporting a `metadata` constant (see [`layout`](#layout)). For **dynamic pages** where the metadata depends on route params or fetched data, export an async function named `generateMetadata` instead.
 
@@ -519,7 +519,7 @@ Folders inside `app/` define route segments. Beyond naming them after the URL se
 | [`[[...folder]]`](#optional-catch-all-route) | Optional Catch-All Route | `app/docs/[[...path]]/` | Like catch-all, but also matches zero segments           |
 | [`(folder)`](#route-group)                   | Route Group              | `app/(marketing)/`      | Groups routes for organization — invisible in the URL    |
 | [`_folder`](#private-folder)                 | Private Folder           | `app/_components/`      | Excluded from routing entirely                           |
-| [`@folder`](#parallel-route)                 | Parallel Route           | `app/@modal/`           | Named slot rendered simultaneously in the same layout    |
+| [`@folder`](#parallel-routes)                | Parallel Route           | `app/@modal/`           | Named slot rendered simultaneously in the same layout    |
 | [`(.)folder`](#intercepting-routes)          | Intercepting Route       | `app/(.)image/`         | Intercepts internal navigation to show alternate content |
 
 ---
