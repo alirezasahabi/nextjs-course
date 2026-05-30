@@ -11,25 +11,25 @@
  */
 
 import ModalBackdrop from "@/components/modal-backdrop";
-import { DUMMY_NEWS } from "@/dummy-news";
+import { getNewsItem } from "@/lib/news";
 import { notFound } from "next/navigation";
 
 interface Props {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }
 const InterceptedImagePage = async ({ params }: Props) => {
-  const id = (await params).id;
+  const slug = (await params).slug;
 
-  const news = DUMMY_NEWS.find((news) => news.id === id);
+  const newsItem = await getNewsItem(slug);
 
-  if (!news) notFound();
+  if (!newsItem) notFound();
 
   return (
     <>
       <ModalBackdrop />
       <dialog className="modal" open>
         <div className="fullscreen-image">
-          <img src={`/images/news/${news?.image}`} alt={news?.title} />
+          <img src={`/images/news/${newsItem?.image}`} alt={newsItem?.title} />
         </div>
       </dialog>
     </>

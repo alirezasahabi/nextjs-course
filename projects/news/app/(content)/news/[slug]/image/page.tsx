@@ -1,4 +1,4 @@
-import { DUMMY_NEWS } from "@/dummy-news";
+import { getNewsItem } from "@/lib/news";
 import { notFound } from "next/navigation";
 
 interface Props {
@@ -6,18 +6,18 @@ interface Props {
    * Nested rotues, inside dynamic routes will also have access to
    * that dynamic route parameter.
    */
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }
 const ImagePage = async ({ params }: Props) => {
-  const id = (await params).id;
+  const slug = (await params).slug;
 
-  const news = DUMMY_NEWS.find((news) => news.id === id);
+  const newsItem = await getNewsItem(slug);
 
-  if (!news) notFound();
+  if (!newsItem) notFound();
 
   return (
     <div className="fullscreen-image">
-      <img src={`/images/news/${news?.image}`} alt={news?.title} />
+      <img src={`/images/news/${newsItem?.image}`} alt={newsItem?.title} />
     </div>
   );
 };

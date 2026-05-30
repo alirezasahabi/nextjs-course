@@ -1,12 +1,20 @@
 import sql from "better-sqlite3";
-import { DUMMY_NEWS, News } from "@/dummy-news";
 
 // We pass a path to our DB file that's relative to the root project folder.
 const db = sql("data.db");
 
+export interface NewsItem {
+  id: string;
+  slug: string;
+  title: string;
+  image: string;
+  date: string;
+  content: string;
+}
+
 export async function getAllNews() {
   // better-sqlite3 gives a synchronous API
-  const news = db.prepare("SELECT * FROM news").all() as News[];
+  const news = db.prepare("SELECT * FROM news").all() as NewsItem[];
 
   // Simulating loading
   await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -14,43 +22,66 @@ export async function getAllNews() {
   return news;
 }
 
-export function getLatestNews() {
-  return DUMMY_NEWS.slice(0, 3);
+export async function getNewsItem(slug: string) {
+  const newsItem = db
+    .prepare("SELECT * FROM news WHERE slug = ?")
+    .get(slug) as NewsItem;
+
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  return newsItem;
 }
 
-export function getAvailableNewsYears() {
-  return DUMMY_NEWS.reduce<number[]>((years, news) => {
-    const year = new Date(news.date).getFullYear();
-    if (!years.includes(year)) {
-      years.push(year);
-    }
-    return years;
-  }, []).sort((a, b) => b - a);
+export async function getLatestNews() {
+  const latestNews = db
+    .prepare("SELECT * FROM news ORDER BY date DESC LIMIT 3")
+    .all() as NewsItem[];
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  return latestNews;
+}
+
+export async function getAvailableNewsYears() {
+  const years = (
+    db
+      .prepare("SELECT DISTINCT strftime('%Y', date) as year FROM news")
+      .all() as any[]
+  ).map((year) => year.year) as string[];
+
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  return years;
 }
 
 export function getAvailableNewsMonths(year: string) {
-  return DUMMY_NEWS.reduce<number[]>((months, news) => {
-    const newsYear = new Date(news.date).getFullYear();
-    if (newsYear === +year) {
-      const month = new Date(news.date).getMonth();
-      if (!months.includes(month)) {
-        months.push(month + 1);
-      }
-    }
-    return months;
-  }, []).sort((a, b) => b - a);
+  return (
+    db
+      .prepare(
+        "SELECT DISTINCT strftime('%m', date) as month FROM news WHERE strftime('%Y', date) = ?",
+      )
+      .all(year) as any[]
+  ).map((month) => month.month) as string[];
 }
 
-export function getNewsForYear(year: string) {
-  return DUMMY_NEWS.filter(
-    (news) => new Date(news.date).getFullYear() === +year,
-  );
+export async function getNewsForYear(year: string) {
+  const news = db
+    .prepare(
+      "SELECT * FROM news WHERE strftime('%Y', date) = ? ORDER BY date DESC",
+    )
+    .all(year) as NewsItem[];
+
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  return news;
 }
 
-export function getNewsForYearAndMonth(year: string, month: string) {
-  return DUMMY_NEWS.filter((news) => {
-    const newsYear = new Date(news.date).getFullYear();
-    const newsMonth = new Date(news.date).getMonth() + 1;
-    return newsYear === +year && newsMonth === +month;
-  });
+export async function getNewsForYearAndMonth(year: string, month: string) {
+  const news = db
+    .prepare(
+      "SELECT * FROM news WHERE strftime('%Y', date) = ? AND strftime('%m', date) = ? ORDER BY date DESC",
+    )
+    .all(year, month) as NewsItem[];
+
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  return news;
 }

@@ -1,15 +1,15 @@
+import { NewsItem } from "@/lib/news";
 import Link from "next/link";
-import { News } from "@/dummy-news";
 
 interface Props {
-  list: News[];
+  list: NewsItem[];
 }
 const NewsList = ({ list }: Props) => {
   return (
     <ul className="news-list">
       {list.map((news) => (
         <li key={news.id}>
-          <Link href={`/news/${news.id}`}>
+          <Link href={`/news/${news.slug}`}>
             <img src={`/images/news/${news.image}`} alt={news.title} />
             <span>{news.title}</span>
           </Link>

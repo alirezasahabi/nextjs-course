@@ -5,8 +5,8 @@ import {
   getAvailableNewsYears,
   getNewsForYear,
   getNewsForYearAndMonth,
+  NewsItem,
 } from "@/lib/news";
-import { News } from "@/dummy-news";
 
 interface Props {
   params: Promise<{ filter?: string[] }>;
@@ -16,17 +16,17 @@ const FilteredNewsPage = async ({ params }: Props) => {
   const selectedYear = filter?.[0];
   const selectedMonth = filter?.[1];
 
-  let links = getAvailableNewsYears();
-  let newsList: News[] = [];
+  let links = await getAvailableNewsYears();
+  let newsList: NewsItem[] = [];
 
   if (selectedYear && !selectedMonth) {
     links = getAvailableNewsMonths(selectedYear);
-    newsList = getNewsForYear(selectedYear);
+    newsList = await getNewsForYear(selectedYear);
   }
 
   if (selectedYear && selectedMonth) {
     links = [];
-    newsList = getNewsForYearAndMonth(selectedYear, selectedMonth);
+    newsList = await getNewsForYearAndMonth(selectedYear, selectedMonth);
   }
 
   let newsContent = <p>Not news found for the selected period!</p>;
@@ -34,9 +34,9 @@ const FilteredNewsPage = async ({ params }: Props) => {
   if (newsList.length > 0) newsContent = <NewsList list={newsList} />;
 
   if (
-    (selectedYear && !getAvailableNewsYears().includes(+selectedYear)) ||
+    (selectedYear && !(await getAvailableNewsYears()).includes(selectedYear)) ||
     (selectedMonth &&
-      !getAvailableNewsMonths(selectedYear ?? "").includes(+selectedMonth))
+      !getAvailableNewsMonths(selectedYear ?? "").includes(selectedMonth))
   )
     throw new Error("Invalid filter!");
 
