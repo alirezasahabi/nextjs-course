@@ -1,7 +1,13 @@
-import { DUMMY_NEWS } from "@/dummy-news";
+import sql from "better-sqlite3";
+import { DUMMY_NEWS, News } from "@/dummy-news";
+
+// We pass a path to our DB file that's relative to the root project folder.
+const db = sql("data.db");
 
 export function getAllNews() {
-  return DUMMY_NEWS;
+  // better-sqlite3 gives a synchronous API
+  const news = db.prepare("SELECT * FROM news").all() as News[];
+  return news;
 }
 
 export function getLatestNews() {
@@ -33,7 +39,7 @@ export function getAvailableNewsMonths(year: string) {
 
 export function getNewsForYear(year: string) {
   return DUMMY_NEWS.filter(
-    (news) => new Date(news.date).getFullYear() === +year
+    (news) => new Date(news.date).getFullYear() === +year,
   );
 }
 
