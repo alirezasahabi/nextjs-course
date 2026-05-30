@@ -4,9 +4,13 @@ import { DUMMY_NEWS, News } from "@/dummy-news";
 // We pass a path to our DB file that's relative to the root project folder.
 const db = sql("data.db");
 
-export function getAllNews() {
+export async function getAllNews() {
   // better-sqlite3 gives a synchronous API
   const news = db.prepare("SELECT * FROM news").all() as News[];
+
+  // Simulating loading
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
   return news;
 }
 
