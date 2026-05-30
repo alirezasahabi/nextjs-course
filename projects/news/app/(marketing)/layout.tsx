@@ -1,13 +1,3 @@
-/**
- * Route Group
- * It's set up by adding a new folder & then
- * we should wrap the name of the folder in parentheses.
- * Now we can move the routes we want to this folder.
- * This does not add anything to the URL path.
- * This allows us to set up a dedicated layout,
- * which will only apply to the routes that are part of this group.
- */
-
 import type { Metadata } from "next";
 import "../globals.css";
 
