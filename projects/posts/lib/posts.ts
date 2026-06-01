@@ -76,11 +76,11 @@ export async function getPosts(maxNumber?: number) {
   return maxNumber ? stmt.all(maxNumber) : stmt.all();
 }
 
-interface PostInput {
-  imageUrl: string;
-  title: string;
-  content: string;
+export interface PostInput {
   userId: number;
+  title: string;
+  imageUrl: string;
+  content: string;
 }
 export async function storePost(post: PostInput) {
   const stmt = db.prepare(`
