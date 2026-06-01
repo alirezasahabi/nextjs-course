@@ -5,13 +5,17 @@ import { useFormStatus } from "react-dom";
 const FormSubmit = () => {
   const { pending } = useFormStatus();
 
-  if (pending) return <p>Creating post...</p>;
-
   return (
-    <>
-      <button type="reset">Reset</button>
-      <button>Create Post</button>
-    </>
+    <p className="form-actions">
+      {pending ? (
+        "Creating post..."
+      ) : (
+        <>
+          <button type="reset">Reset</button>
+          <button>Create Post</button>
+        </>
+      )}
+    </p>
   );
 };
 
