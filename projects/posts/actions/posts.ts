@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { storePost } from "@/lib/posts";
+import { storePost, updatePostLikeStatus } from "@/lib/posts";
 import { uploadImage } from "@/lib/cloudinary";
 
 export async function createPost(_: { errors?: string[] }, formData: FormData) {
@@ -37,4 +37,8 @@ export async function createPost(_: { errors?: string[] }, formData: FormData) {
   await storePost(post);
 
   redirect("/feed");
+}
+
+export async function togglePostLikeStatus(postId: number) {
+  await updatePostLikeStatus(postId, 2);
 }

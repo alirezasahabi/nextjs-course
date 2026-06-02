@@ -54,6 +54,7 @@ export interface Post {
   content: string;
   createdAt: string;
   userFirstName: string;
+  isLiked: boolean;
 }
 
 export async function getPosts(maxNumber?: number) {
