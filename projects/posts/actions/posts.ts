@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { storePost, updatePostLikeStatus } from "@/lib/posts";
 import { uploadImage } from "@/lib/cloudinary";
+import { revalidatePath } from "next/cache";
 
 export async function createPost(_: { errors?: string[] }, formData: FormData) {
   const title = formData.get("title") as string;
@@ -36,9 +37,13 @@ export async function createPost(_: { errors?: string[] }, formData: FormData) {
 
   await storePost(post);
 
+  revalidatePath("/", "layout");
+
   redirect("/feed");
 }
 
 export async function togglePostLikeStatus(postId: number) {
   await updatePostLikeStatus(postId, 2);
+
+  revalidatePath("/", "layout");
 }

@@ -1,9 +1,16 @@
+"use client";
+
+import { useOptimistic } from "react";
+import { togglePostLikeStatus } from "@/actions/posts";
 import { formatDate } from "@/lib/format";
 import LikeButton from "./like-icon";
 import { Post } from "@/lib/posts";
-import { togglePostLikeStatus } from "@/actions/posts";
 
-function PostItem({ post }: { post: Post }) {
+interface Props {
+  post: Post;
+  action: (postId: number) => Promise<void>;
+}
+function PostItem({ post, action }: Props) {
   return (
     <article className="post">
       <div className="post-image">
@@ -30,12 +37,12 @@ function PostItem({ post }: { post: Post }) {
              * @param args — Arguments to bind to the parameters of the function.
              * The argument that we pass to bind will then
              * become the new first argument when that function is executed.
-             * normally:  togglePostLikeStatus(formData)
-             * with bind: togglePostLikeStatus(post.id, formData)
-             * 
+             * normally:  action(formData)
+             * with bind: action(post.id, formData)
+             *
              */}
             <form
-              action={togglePostLikeStatus.bind(null, post.id)}
+              action={action.bind(null, post.id)}
               className={post.isLiked ? "liked" : ""}
             >
               <LikeButton />
@@ -49,15 +56,40 @@ function PostItem({ post }: { post: Post }) {
 }
 
 export default function Posts({ posts }: { posts: Post[] }) {
-  if (!posts || posts.length === 0) {
+  const [optimisticPosts, updateOptimisticPosts] = useOptimistic(
+    posts,
+    (prevPosts, updatedPostId: number) => {
+      const updatedPostIndex = prevPosts.findIndex(
+        (post) => post.id === updatedPostId,
+      );
+
+      if (updatedPostIndex === -1) return prevPosts;
+
+      const updatedPost = { ...prevPosts[updatedPostIndex] };
+      updatedPost.isLiked = !updatedPost.isLiked;
+      updatedPost.likes += updatedPost.isLiked ? 1 : -1;
+
+      const newPosts = [...prevPosts];
+      newPosts[updatedPostIndex] = updatedPost;
+
+      return newPosts;
+    },
+  );
+
+  async function updatePost(postId: number) {
+    updateOptimisticPosts(postId);
+    await togglePostLikeStatus(postId);
+  }
+
+  if (!optimisticPosts || optimisticPosts.length === 0) {
     return <p>There are no posts yet. Maybe start sharing some?</p>;
   }
 
   return (
     <ul className="posts">
-      {posts.map((post) => (
+      {optimisticPosts.map((post) => (
         <li key={post.id}>
-          <PostItem post={post} />
+          <PostItem post={post} action={updatePost} />
         </li>
       ))}
     </ul>

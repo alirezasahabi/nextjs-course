@@ -54,6 +54,7 @@ export interface Post {
   content: string;
   createdAt: string;
   userFirstName: string;
+  likes: number;
   isLiked: boolean;
 }
 
@@ -74,7 +75,7 @@ export async function getPosts(maxNumber?: number) {
     ${limitClause}`);
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  return maxNumber ? stmt.all(maxNumber) : stmt.all();
+  return (maxNumber ? stmt.all(maxNumber) : stmt.all()) as Post[];
 }
 
 export interface PostInput {
